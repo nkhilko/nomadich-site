@@ -28,7 +28,7 @@
     background-color: var(--bg);
     color: var(--text);
     font-family: Helvetica, Arial, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
@@ -96,9 +96,29 @@
   
   section {
     padding: 72px 0;
-    border-top: 1px solid var(--border);
+    border-top: none;
+    position: relative;
   }
   
+  section::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  
+  header::after {
+    background: var(--border);
+    box-shadow: inset 0 -1px 0 var(--accent);
+  }
+
+  section:first-of-type::before {
+    display: none;
+  }
+
   section:first-of-type {
     border-top: none;
   }
@@ -129,11 +149,20 @@
   
   /* Keep header stable and minimal; avoid layout shifts */
   header {
+    border-bottom: none;
     position: sticky;
     top: 0;
     z-index: 20;
-    background-color: var(--bg);
-    border-bottom: 1px solid var(--border);
+    background: #fff;
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #eaeaea;
   }
   
   .site-header {
@@ -355,24 +384,34 @@
   /* Sections & Typography
   ===================================== */
   
+  /* No container-width gray lines; only full-width section border-top and accent line remain */
   .section-header {
+    border-top: none;
+    border-bottom: none;
     margin-bottom: 32px;
+    position: sticky;
+    top: 56px;
+    z-index: 5;
+    background: #fff;
   }
   
   .section-header h2 {
     margin: 0 0 8px;
-    font-size: 24px;
+    font-size: 34px;
     font-weight: 650;
+    display: block;
+    width: 100%;
+    letter-spacing: -0.3px;
   }
   
-  /* Neon marker – subtle but visible */
   .section-header h2::after {
     content: "";
     display: block;
-    width: 44px;
+    width: 100%;
     height: 3px;
     background: var(--accent);
     margin-top: 12px;
+    transform: translateY(1px);
   }
   
   .section-header .section-subline {
@@ -383,6 +422,7 @@
   
   .section-text p {
     margin: 0 0 12px;
+    font-size: 1rem; /* или 18px если фиксировано */
   }
   
   .section-text p:last-child {
@@ -438,6 +478,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    font-size: 1rem; /* или 18px если фиксировано */
   }
   
   .product-media {
@@ -454,13 +495,13 @@
   
   .product-title {
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 650;
   }
   
   .product-brew {
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
@@ -468,7 +509,7 @@
   
   .product-notes {
     margin: 4px 0 0;
-    font-size: 14px;
+    font-size: 16px;
   }
   
   .product-meta {
@@ -749,6 +790,36 @@
     letter-spacing: 0.08em;
     padding: 4px 0;
   }
+
+/* Feedback panel
+===================================== */
+
+.form-feedback {
+  margin: 16px 0 24px;
+}
+
+.feedback {
+  border: 1px solid var(--border);
+  padding: 16px;
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.feedback-title {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.feedback-text {
+  margin: 0;
+  color: var(--muted);
+}
+
+.feedback-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
   
   /* Reduced motion
   ===================================== */
@@ -809,4 +880,90 @@
     .hero-copy {
       max-width: 560px;
     }
+  }
+
+
+  /* === FIX: remove container-width gray rules inside section headers === */
+.section-header,
+.section-header * {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+.section-header::before,
+.section-header::after,
+.section-header *::before,
+.section-header *::after {
+  /* мы оставляем только .section-header h2::after (лимонный маркер),
+     поэтому тут НЕ используем display:none глобально, чтобы его не убить */
+  box-shadow: none !important;
+}
+
+/* важно: возвращаем лимонный маркер, если его вдруг прибило чем-то выше */
+.section-header h2::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: var(--accent);
+  margin-top: 12px;
+}
+
+/* FIX: section-subline should NOT draw its own gray divider */
+.section-subline {
+    border: 0 !important;
+    box-shadow: none !important;
+    background-image: none !important;
+  }
+  
+  .section-subline::before,
+  .section-subline::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* NUCLEAR FIX: remove any divider under section subline */
+.section-header .section-subline,
+.section-subline {
+  border: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  background: none !important;
+  background-image: none !important;
+  outline: none !important;
+}
+
+.section-header .section-subline::before,
+.section-header .section-subline::after,
+.section-subline::before,
+.section-subline::after {
+  content: none !important;
+  display: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+/* FINAL: Sticky section headers + full-width accent (do not override this) */
+.section-header {
+    position: sticky;
+    top: 56px; /* высота верхнего меню */
+    z-index: 10;
+    background: #ffffff;
+    padding-top: 16px;
+    padding-bottom: 14px;
+    margin-bottom: 32px;
+  }
+  
+  .section-header h2::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--accent);
+    margin-top: 12px;
+    transform: translateY(1px); /* опустить линию на 1px */
   }

@@ -352,6 +352,65 @@ function clearFormMessage(form) {
   if (container) container.textContent = "";
 }
 
+function renderFeedback(type, options = {}) {
+  const feedbackRoot = document.getElementById("form-feedback");
+  if (!feedbackRoot) return;
+
+  const { title, text, showActions } = options;
+
+  feedbackRoot.innerHTML = "";
+
+  if (!title && !text) return;
+
+  const panel = document.createElement("div");
+  panel.className = "feedback";
+
+  const titleEl = document.createElement("p");
+  titleEl.className = "feedback-title";
+  titleEl.textContent = title || "";
+  panel.appendChild(titleEl);
+
+  if (text) {
+    const textEl = document.createElement("p");
+    textEl.className = "feedback-text";
+    textEl.textContent = text;
+    panel.appendChild(textEl);
+  }
+
+  if (showActions) {
+    const actions = document.createElement("div");
+    actions.className = "feedback-actions";
+
+    const backLink = document.createElement("a");
+    backLink.href = "#coffee";
+    backLink.className = "btn secondary";
+    backLink.textContent = "Вернуться к кофе";
+    actions.appendChild(backLink);
+
+    const newOrderBtn = document.createElement("button");
+    newOrderBtn.type = "button";
+    newOrderBtn.className = "btn primary";
+    newOrderBtn.textContent = "Новый заказ";
+    newOrderBtn.addEventListener("click", () => {
+      const form = document.getElementById("order-form");
+      if (form instanceof HTMLFormElement) {
+        form.reset();
+      }
+      lineItems = [];
+      renderOrderItems();
+      feedbackRoot.innerHTML = "";
+      const helper = document.getElementById("submit-helper");
+      if (helper) helper.style.display = "";
+      scrollToOrder();
+    });
+
+    actions.appendChild(newOrderBtn);
+    panel.appendChild(actions);
+  }
+
+  feedbackRoot.appendChild(panel);
+}
+
 function buildPayload(form) {
   const nameInput = form.querySelector('input[name="name"]');
   const phoneInput = form.querySelector('input[name="phone"]');
@@ -537,25 +596,29 @@ async function handleFormSubmit(event) {
       }
     }
 
-    showFormMessage(
-      form,
-      "Спасибо! Мы получили заказ и скоро свяжемся для подтверждения.",
-      "success"
-    );
-
-    // Reset form & cart
+    clearFormMessage(form);
     form.reset();
     lineItems = [];
     renderOrderItems();
-
-    // Re-apply fulfillment visibility after reset
     setupFulfillmentToggle();
+    renderFeedback("success", {
+      title: "Спасибо! Заказ получен.",
+      text: "Мы скоро свяжемся для подтверждения доставки/самовывоза.",
+      showActions: true
+    });
+    const el = document.getElementById("form-feedback");
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+    const helper = document.getElementById("submit-helper");
+    if (helper) helper.style.display = "none";
   } catch {
-    showFormMessage(
-      form,
-      "Произошла ошибка при отправке заказа. Попробуйте ещё раз или свяжитесь с нами напрямую.",
-      "error"
-    );
+    renderFeedback("error", {
+      title: "Ошибка отправки.",
+      text: "Попробуйте ещё раз или свяжитесь с нами."
+    });
+    clearFormMessage(form);
   } finally {
     if (submitButton instanceof HTMLButtonElement) {
       submitButton.disabled = false;

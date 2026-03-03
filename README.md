@@ -1,6 +1,6 @@
 # НОМАДИЧ — NOMAD Coffee в Белграде (MVP)
 
-Одностраничный сайт для заказа specialty кофе NOMAD (Барселона) в Белграде.
+Одностраничный сайт для заказа specialty кофе NOMAD (Барселона) в Белграде.  
 MVP работает без онлайн-оплаты: **оплата при получении (наличные)**.
 
 ## Что умеет
@@ -12,11 +12,11 @@ MVP работает без онлайн-оплаты: **оплата при п�
 
 ## Структура проекта
 - `index.html` — разметка
-- `styles.css` — стили (white / black + accent #E6FF00)
+- `styles.css` — стили (white/black + accent `#E6FF00`)
 - `app.js` — логика корзины и отправки формы
 - `assets/` — изображения товаров
 
 ## Настройка Formspree
-В `app.js` установи:
+В `app.js` укажи свой endpoint:
 ```js
 const FORMSPREE_URL = "https://formspree.io/f/XXXXXXXX";
