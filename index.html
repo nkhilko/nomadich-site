@@ -5,8 +5,15 @@
 <title>НОМАДИЧ — specialty кофе из Барселоны в Белграде</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="НОМАДИЧ — небольшие дропы specialty кофе NOMAD Coffee из Барселоны с доставкой по Белграду. Свежая обжарка, малые партии.">
+<meta property="og:title" content="НОМАДИЧ — specialty кофе из Барселоны в Белграде">
+<meta property="og:description" content="Малые партии. Свежая обжарка NOMAD Coffee. Оплата при получении.">
+<meta property="og:image" content="https://nkhilko.github.io/nomadich-site/assets/og.jpg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nkhilko.github.io/nomadich-site/">
+<meta property="og:site_name" content="НОМАДИЧ">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<meta name="robots" content="index, follow">
 </head>
 <body id="top">
 <header>
@@ -260,6 +267,7 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <h2 id="order-title">Оформить заказ</h2>
 <p class="section-subline">Размер партий ограничен.</p>
 </header>
+  <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
 <form id="order-form" novalidate>
 <!-- Line items (будет заполняться скриптом) -->
 <section aria-labelledby="order-items-title">
@@ -406,7 +414,7 @@ class="honeypot"
 <button type="submit" class="btn primary">
 Отправить заказ
 </button>
-<p class="form-note">
+<p class="form-note" id="submit-helper">
 Мы свяжемся с вами для подтверждения.
 </p>
 <p class="privacy-note">
