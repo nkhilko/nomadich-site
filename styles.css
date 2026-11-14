@@ -572,6 +572,12 @@
     gap: 40px;
   }
   
+  #order-controls {
+    display: grid;
+    gap: 28px;
+    min-width: 0;
+  }
+
   .form-section-header {
     margin-bottom: 12px;
   }
@@ -707,14 +713,8 @@
     font-weight: 700;
   }
   
-  /* Anti-spam / notes
+  /* Checkout notes
   ===================================== */
-  
-  .honeypot {
-    position: absolute;
-    left: -9999px;
-    opacity: 0;
-  }
   
   .form-note {
     margin-top: 12px;
