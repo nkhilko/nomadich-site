@@ -2,11 +2,12 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>НОМАДИЧ — specialty кофе из Барселоны в Белграде</title>
+<meta http-equiv="Content-Security-Policy" content="form-action 'none'; connect-src 'none'">
+<title>НОМАДИЧ — демонстрация кофейной витрины</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="НОМАДИЧ — небольшие дропы specialty кофе NOMAD Coffee из Барселоны с доставкой по Белграду. Свежая обжарка, малые партии.">
-<meta property="og:title" content="НОМАДИЧ — specialty кофе из Барселоны в Белграде">
-<meta property="og:description" content="Малые партии. Свежая обжарка NOMAD Coffee. Оплата при получении.">
+<meta name="description" content="Демонстрация каталога кофе, корзины и оформления заказа.">
+<meta property="og:title" content="НОМАДИЧ — демонстрация кофейной витрины">
+<meta property="og:description" content="Каталог, корзина и пробное оформление. Реальные заказы не принимаются.">
 <meta property="og:image" content="https://nkhilko.github.io/nomadich-site/assets/og.jpg">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://nkhilko.github.io/nomadich-site/">
@@ -25,7 +26,7 @@
 <ul class="site-nav">
 <li><a href="#coffee">Кофе</a></li>
 <li><a href="#delivery">Доставка</a></li>
-<li><a href="#order">Заказ</a></li>
+<li><a href="#order">Демо-заказ</a></li>
 </ul>
 </nav>
 </div>
@@ -37,12 +38,11 @@
 <h1 id="hero-title">НОМАДИЧ</h1>
 <div class="hero-copy">
 <p>Specialty кофе из Барселоны от NOMAD.</p>
-<p>Малые партии. Свежая обжарка.</p>
-<p>Доставка по Белграду. Оплата при получении.</p>
+<p><strong>Это демонстрация. Реальные заказы не принимаются.</strong></p>
 </div>
 <div class="hero-ctas">
 <a href="#coffee" class="btn primary">Выбрать кофе</a>
-<a href="#order" class="btn ghost">Оформить заказ</a>
+<a href="#order" class="btn ghost">Попробовать оформление</a>
 </div>
 </div>
 </section>
@@ -51,9 +51,7 @@
 <div class="section-inner">
 <h2 id="about-title">О проекте</h2>
 <div class="section-text">
-<p>НОМАДИЧ — это небольшие дропы specialty кофе от NOMAD Coffee (Барселона), которые мы распространяем в Белграде.</p>
-<p>Мы привозим ограниченные партии и предлагаем их напрямую — без постоянного склада и лишней витрины.</p>
-<p>Мы отбираем кофе, который пьём сами.</p>
+<p>НОМАДИЧ — пример витрины specialty кофе с каталогом, корзиной и выбором способа получения.</p>
 </div>
 </div>
 </section>
@@ -61,8 +59,8 @@
 <section id="coffee" aria-labelledby="coffee-title">
 <div class="section-inner">
 <header class="section-header">
-<h2 id="coffee-title">Кофе в этом дропе</h2>
-<p class="section-subline">Актуальная подборка обжарок NOMAD Coffee.</p>
+<h2 id="coffee-title">Каталог кофе</h2>
+<p class="section-subline">Пример ассортимента на основе обжарок NOMAD Coffee.</p>
 </header>
 <div class="coffee-types" aria-label="Типы приготовления кофе">
 <article id="espresso" class="coffee-type">
@@ -232,7 +230,7 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 </article>
 </div>
 <div class="section-cta">
-<a href="#order" class="btn primary">Оформить заказ</a>
+<a href="#order" class="btn primary">Попробовать оформление</a>
 </div>
 </div>
 </section>
@@ -241,10 +239,7 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <div class="section-inner">
 <h2 id="delivery-title">Доставка и самовывоз</h2>
 <div class="section-text">
-<p>Доставка по Белграду — по согласованию.</p>
-<p>Самовывоз — по предварительной договорённости.</p>
-<p>Оплата — наличными при получении.</p>
-<p class="pickup-placeholder">Точка самовывоза: [адрес]</p>
+<p>В демо можно выбрать курьерскую доставку по Белграду или самовывоз.</p>
 </div>
 </div>
 </section>
@@ -253,10 +248,9 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <div class="section-inner">
 <h2 id="how-title">Как это работает</h2>
 <ol class="steps-list">
-<li>Вы выбираете кофе и оставляете заказ.</li>
-<li>Мы связываемся для подтверждения.</li>
-<li>Передаём заказ курьером или согласуем самовывоз.</li>
-<li>Оплата при получении.</li>
+<li>Добавьте кофе в корзину и проверьте сумму.</li>
+<li>Выберите доставку или самовывоз и укажите вымышленные данные.</li>
+<li>Завершите демо и посмотрите подтверждение на странице.</li>
 </ol>
 </div>
 </section>
@@ -264,11 +258,14 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <section id="order" aria-labelledby="order-title">
 <div class="section-inner">
 <header class="section-header">
-<h2 id="order-title">Оформить заказ</h2>
-<p class="section-subline">Размер партий ограничен.</p>
+<h2 id="order-title">Попробовать оформление</h2>
+<p class="section-subline">Реальные заказы не принимаются. Используйте только вымышленные данные.</p>
 </header>
   <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
-<form id="order-form" novalidate>
+<div id="order-form">
+<p id="checkout-unavailable">Для демо-оформления требуется JavaScript. Если оформление недоступно, поля остаются отключёнными.</p>
+<fieldset id="order-controls" class="form-fieldset" disabled>
+<legend>Данные заказа</legend>
 <!-- Line items (будет заполняться скриптом) -->
 <section aria-labelledby="order-items-title">
 <div class="form-section-header">
@@ -292,9 +289,8 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <label for="customer-name">Имя и фамилия </label>
 <input
 id="customer-name"
-name="name"
 type="text"
-autocomplete="name"
+autocomplete="off" placeholder="Иван Примеров"
 required
 >
 </div>
@@ -302,10 +298,9 @@ required
 <label for="customer-phone">Телефон </label>
 <input
 id="customer-phone"
-name="phone"
 type="tel"
 inputmode="tel"
-autocomplete="tel"
+autocomplete="off" placeholder="000000000"
 required
 >
 </div>
@@ -313,9 +308,8 @@ required
 <label for="customer-email">Email </label>
 <input
 id="customer-email"
-name="email"
 type="email"
-autocomplete="email"
+autocomplete="off" placeholder="demo@example.invalid"
 required
 >
 </div>
@@ -356,16 +350,15 @@ required
 <label for="address-line1">Адрес (улица, дом, квартира)</label>
 <input
 id="address-line1"
-name="address_line1"
 type="text"
-autocomplete="street-address"
+autocomplete="off" placeholder="Примерная улица, 1"
 >
 </div>
 <div class="form-field">
 <label for="address-notes">Примечание (район, ориентир)</label>
 <input
 id="address-notes"
-name="address_notes"
+autocomplete="off"
 type="text"
 >
 </div>
@@ -373,7 +366,7 @@ type="text"
 <label for="preferred-time">Предпочтительное время доставки</label>
 <input
 id="preferred-time"
-name="preferred_time"
+autocomplete="off"
 type="text"
 placeholder="Например: после 18:00"
 >
@@ -382,7 +375,7 @@ placeholder="Например: после 18:00"
 <label for="order-comment">Комментарий к заказу</label>
 <textarea
 id="order-comment"
-name="comment"
+autocomplete="off"
 rows="3"
 ></textarea>
 </div>
@@ -393,62 +386,30 @@ rows="3"
 <section aria-labelledby="summary-title">
 <div class="form-section-header">
 <h3 id="summary-title">Итог</h3>
-<p class="form-hint">Окончательная стоимость и детали будут подтверждены при звонке.</p>
+<p class="form-hint">Цены приведены для демонстрации расчёта.</p>
 </div>
 <div id="order-summary" aria-live="polite">
 <p><span class="summary-label">Позиций:</span> <span class="summary-value" data-summary="items-count">0</span></p>
 <p><span class="summary-label">Сумма:</span> <span class="summary-value" data-summary="total-amount">0 RSD</span></p>
 </div>
 </section>
-<!-- Anti-spam & submit -->
-<section aria-label="Отправка заказа">
-<input
-type="text"
-name="company"
-id="company"
-autocomplete="organization"
-tabindex="-1"
-aria-hidden="true"
-class="honeypot"
->
-<button type="submit" class="btn primary">
-Отправить заказ
+<section aria-label="Демонстрационное оформление">
+<button type="button" id="complete-checkout" class="btn primary">
+Завершить демо-заказ
 </button>
-<p class="form-note" id="submit-helper">
-Мы свяжемся с вами для подтверждения.
-</p>
-<p class="privacy-note">
-Отправляя форму, вы соглашаетесь на обработку указанных данных для связи по вашему заказу. Данные не передаются третьим лицам, за исключением курьерской службы для доставки.
-</p>
+<p class="form-note">Введённые данные остаются на этой странице и очищаются после завершения демо.</p>
 </section>
-</form>
+</fieldset>
+</div>
 </div>
 </section>
 </main>
 <!-- FOOTER -->
 <footer id="footer" aria-labelledby="footer-title">
 <div class="section-inner">
-<h2 id="footer-title" class="visually-hidden">Информация о продавце и условия</h2>
-<section aria-label="Реквизиты продавца" class="footer-block">
-<p>ИП / Предприниматель: [ФИО]</p>
-<p>PIB: [номер]</p>
-<p>Адрес: [адрес]</p>
-<p>Контакты: [телефон] · [email]</p>
+<h2 id="footer-title" class="visually-hidden">Информация о демонстрации</h2>
+<section aria-label="Фотографии каталога" class="footer-block">
 <p><em>Фото: NOMAD Coffee (по согласованию).</em></p>
-</section>
-<section aria-label="Условия и политика" class="footer-policies">
-<article class="policy">
-<h3>Условия доставки</h3>
-<p>Доставка осуществляется по Белграду по предварительному согласованию времени и адреса. Возможны дополнительные условия в зависимости от района.</p>
-</article>
-<article class="policy">
-<h3>Возврат</h3>
-<p>Кофе как пищевой продукт не подлежит возврату, за исключением случаев заводского брака или ошибки при комплектовании заказа. В таких ситуациях свяжитесь с нами в течение 24 часов.</p>
-</article>
-<article class="policy">
-<h3>Политика конфиденциальности</h3>
-<p>Мы используем указанные данные только для обработки заказа и связи с вами. Данные не продаются и не передаются третьим лицам, кроме курьерской службы для доставки.</p>
-</article>
 </section>
 <div class="footer-bottom">
 <a href="#top" class="back-to-top">Наверх</a>

@@ -1,8 +1,5 @@
 // app.js — НОМАДИЧ
 
-const FORMSPREE_URL = "https://formspree.io/f/xvzbybjv";
-const ZAPIER_HOOK_URL = "";
-
 // Product catalog
 const products = [
   {
@@ -77,8 +74,6 @@ function scrollToOrder() {
   const orderSection = document.getElementById("order");
   if (orderSection && typeof orderSection.scrollIntoView === "function") {
     orderSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  } else {
-    window.location.hash = "#order";
   }
 }
 
@@ -289,40 +284,30 @@ function setupOrderItemsEvents() {
   });
 }
 
-function setupFulfillmentToggle() {
-  const fulfillmentRadios = document.querySelectorAll('input[name="fulfillment"]');
-  if (!fulfillmentRadios.length) return;
-
+function updateAddressVisibility() {
   const addressFieldset = document.getElementById("address-fields");
   const addressInput = document.getElementById("address-line1");
+  const isCourier = document.querySelector('input[name="fulfillment"]:checked')?.value === "courier";
+  addressFieldset.hidden = !isCourier;
+  addressFieldset.disabled = !isCourier;
+  addressInput.required = isCourier;
+}
 
-  function updateAddressVisibility() {
-    let fulfillmentValue = "";
-    fulfillmentRadios.forEach((radio) => {
-      if (radio instanceof HTMLInputElement && radio.checked) {
-        fulfillmentValue = radio.value;
-      }
-    });
+function resetCheckoutFields() {
+  const controls = document.getElementById("order-controls");
+  controls.querySelectorAll('input:not([type="radio"]), textarea').forEach((field) => {
+    field.value = "";
+  });
+  controls.querySelectorAll('input[name="fulfillment"]').forEach((option) => {
+    option.checked = false;
+  });
+  updateAddressVisibility();
+}
 
-    const isCourier = fulfillmentValue === "courier";
-
-    if (addressFieldset) {
-      addressFieldset.style.display = isCourier ? "" : "none";
-    }
-
-    if (addressInput instanceof HTMLInputElement) {
-      addressInput.required = isCourier;
-      if (!isCourier) {
-        addressInput.setCustomValidity("");
-      }
-    }
-  }
-
-  fulfillmentRadios.forEach((radio) => {
+function setupFulfillmentToggle() {
+  document.querySelectorAll('input[name="fulfillment"]').forEach((radio) => {
     radio.addEventListener("change", updateAddressVisibility);
   });
-
-  // Initial state
   updateAddressVisibility();
 }
 
@@ -352,294 +337,106 @@ function clearFormMessage(form) {
   if (container) container.textContent = "";
 }
 
-function renderFeedback(type, options = {}) {
+function showDemoConfirmation(fulfillment) {
   const feedbackRoot = document.getElementById("form-feedback");
   if (!feedbackRoot) return;
 
-  const { title, text, showActions } = options;
-
-  feedbackRoot.innerHTML = "";
-
-  if (!title && !text) return;
+  const delivery = fulfillment === "courier" ? "Доставка курьером" : "Самовывоз";
+  feedbackRoot.replaceChildren();
 
   const panel = document.createElement("div");
   panel.className = "feedback";
 
   const titleEl = document.createElement("p");
   titleEl.className = "feedback-title";
-  titleEl.textContent = title || "";
+  titleEl.textContent = "Демо-заказ завершён";
   panel.appendChild(titleEl);
 
-  if (text) {
-    const textEl = document.createElement("p");
-    textEl.className = "feedback-text";
-    textEl.textContent = text;
-    panel.appendChild(textEl);
-  }
+  const text = document.createElement("p");
+  text.className = "feedback-text";
+  text.textContent = `${delivery}. Реальный заказ не создан. Данные не отправлены и очищены.`;
+  panel.appendChild(text);
 
-  if (showActions) {
-    const actions = document.createElement("div");
-    actions.className = "feedback-actions";
+  const actions = document.createElement("div");
+  actions.className = "feedback-actions";
 
-    const backLink = document.createElement("a");
-    backLink.href = "#coffee";
-    backLink.className = "btn secondary";
-    backLink.textContent = "Вернуться к кофе";
-    actions.appendChild(backLink);
+  const backLink = document.createElement("a");
+  backLink.href = "#coffee";
+  backLink.className = "btn secondary";
+  backLink.textContent = "Вернуться к кофе";
+  actions.appendChild(backLink);
 
-    const newOrderBtn = document.createElement("button");
-    newOrderBtn.type = "button";
-    newOrderBtn.className = "btn primary";
-    newOrderBtn.textContent = "Новый заказ";
-    newOrderBtn.addEventListener("click", () => {
-      const form = document.getElementById("order-form");
-      if (form instanceof HTMLFormElement) {
-        form.reset();
-      }
-      lineItems = [];
-      renderOrderItems();
-      feedbackRoot.innerHTML = "";
-      const helper = document.getElementById("submit-helper");
-      if (helper) helper.style.display = "";
-      scrollToOrder();
-    });
-
-    actions.appendChild(newOrderBtn);
-    panel.appendChild(actions);
-  }
-
+  const newOrderBtn = document.createElement("button");
+  newOrderBtn.type = "button";
+  newOrderBtn.className = "btn primary";
+  newOrderBtn.textContent = "Начать новое демо";
+  newOrderBtn.addEventListener("click", () => {
+    resetCheckoutFields();
+    lineItems = [];
+    renderOrderItems();
+    clearFormMessage(document.getElementById("order-form"));
+    feedbackRoot.replaceChildren();
+    scrollToOrder();
+  });
+  actions.appendChild(newOrderBtn);
+  panel.appendChild(actions);
   feedbackRoot.appendChild(panel);
 }
 
-function buildPayload(form) {
-  const nameInput = form.querySelector('input[name="name"]');
-  const phoneInput = form.querySelector('input[name="phone"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const addressInput = form.querySelector('input[name="address_line1"]');
-  const addressNotesInput = form.querySelector('input[name="address_notes"]');
-  const preferredTimeInput = form.querySelector('input[name="preferred_time"]');
-  const commentInput = form.querySelector('textarea[name="comment"]');
-  const fulfillmentRadios = form.querySelectorAll('input[name="fulfillment"]');
-
-  let fulfillment = "";
-  fulfillmentRadios.forEach((radio) => {
-    if (radio instanceof HTMLInputElement && radio.checked) {
-      fulfillment = radio.value;
-    }
-  });
-
-  const itemsDetailed = lineItems.map((item) => {
-    const product = getProductById(item.sku);
-    if (!product) {
-      return {
-        sku: item.sku,
-        name: "Неизвестно",
-        brew: "",
-        qty: item.qty,
-        priceRsd: 0,
-        lineTotalRsd: 0
-      };
-    }
-    const lineTotal = product.priceRsd * item.qty;
-    return {
-      sku: product.id,
-      name: product.name,
-      brew: product.brew,
-      qty: item.qty,
-      priceRsd: product.priceRsd,
-      lineTotalRsd: lineTotal
-    };
-  });
-
-  const totalItems = lineItems.reduce((sum, item) => sum + item.qty, 0);
-  const totalPrice = lineItems.reduce((sum, item) => {
-    const product = getProductById(item.sku);
-    return product ? sum + product.priceRsd * item.qty : sum;
-  }, 0);
-
-  return {
-    timestamp: new Date().toISOString(),
-    customer: {
-      name: nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "",
-      phone: phoneInput instanceof HTMLInputElement ? phoneInput.value.trim() : "",
-      email: emailInput instanceof HTMLInputElement ? emailInput.value.trim() : ""
-    },
-    fulfillment,
-    address: {
-      line1: addressInput instanceof HTMLInputElement ? addressInput.value.trim() : "",
-      notes: addressNotesInput instanceof HTMLInputElement ? addressNotesInput.value.trim() : ""
-    },
-    preferredTime: preferredTimeInput instanceof HTMLInputElement ? preferredTimeInput.value.trim() : "",
-    comment: commentInput instanceof HTMLTextAreaElement ? commentInput.value.trim() : "",
-    items: itemsDetailed,
-    totals: {
-      itemsCount: totalItems,
-      amountRsd: totalPrice,
-      formattedAmount: formatRsd(totalPrice)
-    }
-  };
-}
-
-async function handleFormSubmit(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  if (!(form instanceof HTMLFormElement)) return;
-
+function completeCheckout() {
+  const form = document.getElementById("order-form");
+  const controls = document.getElementById("order-controls");
+  if (controls.disabled) return;
   clearFormMessage(form);
+  document.getElementById("form-feedback").replaceChildren();
 
-  const submitButton = form.querySelector('button[type="submit"]');
-  const honeypot = form.querySelector('input[name="company"]');
-  const nameInput = form.querySelector('input[name="name"]');
-  const phoneInput = form.querySelector('input[name="phone"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const addressInput = form.querySelector('input[name="address_line1"]');
-  const fulfillmentRadios = form.querySelectorAll('input[name="fulfillment"]');
-
-  // Honeypot spam check
-  if (honeypot instanceof HTMLInputElement && honeypot.value.trim() !== "") {
-    return;
-  }
-
-  // Items validation
   if (lineItems.length === 0) {
-    showFormMessage(form, "Добавьте хотя бы одну позицию в заказ.", "error");
+    showFormMessage(form, "Добавьте хотя бы одну позицию в корзину.", "error");
     return;
   }
 
-  const totalItems = lineItems.reduce((sum, item) => sum + item.qty, 0);
-  if (totalItems === 0) {
-    showFormMessage(form, "Количество позиций должно быть больше нуля.", "error");
-    return;
-  }
-
-  // Required fields
-  if (!(nameInput instanceof HTMLInputElement) || !nameInput.value.trim()) {
-    showFormMessage(form, "Укажите, пожалуйста, ваше имя.", "error");
-    if (nameInput) nameInput.focus();
-    return;
-  }
-
-  if (!(phoneInput instanceof HTMLInputElement) || !phoneInput.value.trim()) {
-    showFormMessage(form, "Укажите, пожалуйста, ваш телефон.", "error");
-    if (phoneInput) phoneInput.focus();
-    return;
-  }
-
-  if (!(emailInput instanceof HTMLInputElement) || !emailInput.value.trim()) {
-    showFormMessage(form, "Укажите, пожалуйста, ваш email.", "error");
-    if (emailInput) emailInput.focus();
-    return;
-  }
-
-  let fulfillment = "";
-  fulfillmentRadios.forEach((radio) => {
-    if (radio instanceof HTMLInputElement && radio.checked) {
-      fulfillment = radio.value;
-    }
-  });
-
+  const fulfillment = controls.querySelector('input[name="fulfillment"]:checked')?.value;
   if (!fulfillment) {
-    showFormMessage(form, "Выберите способ получения: курьер или самовывоз.", "error");
+    showFormMessage(form, "Выберите доставку или самовывоз.", "error");
     return;
   }
 
-  // Address required if courier
-  if (fulfillment === "courier") {
-    if (!(addressInput instanceof HTMLInputElement) || !addressInput.value.trim()) {
-      showFormMessage(form, "Укажите, пожалуйста, адрес для доставки.", "error");
-      if (addressInput) addressInput.focus();
+  const fields = ["customer-name", "customer-phone", "customer-email"];
+  if (fulfillment === "courier") fields.push("address-line1");
+  for (const id of fields) {
+    const field = document.getElementById(id);
+    if (!field.value.trim() || !field.reportValidity()) {
+      showFormMessage(form, "Проверьте примеры данных в обязательных полях.", "error");
+      field.focus();
       return;
     }
   }
 
-  const payload = buildPayload(form);
-
-  // If Formspree URL is not configured
-  if (FORMSPREE_URL.includes("XXXX")) {
-    showFormMessage(
-      form,
-      "Форма заказа ещё не настроена. Укажите рабочий Formspree endpoint в коде.",
-      "error"
-    );
-    return;
-  }
-
-  // Disable submit during sending
-  if (submitButton instanceof HTMLButtonElement) {
-    submitButton.disabled = true;
-  }
-
-  try {
-    const response = await fetch(FORMSPREE_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error("Request failed");
-    }
-
-    if (ZAPIER_HOOK_URL && typeof ZAPIER_HOOK_URL === "string") {
-      try {
-        await fetch(ZAPIER_HOOK_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch {
-        // Silent Zapier error
-      }
-    }
-
-    clearFormMessage(form);
-    form.reset();
-    lineItems = [];
-    renderOrderItems();
-    setupFulfillmentToggle();
-    renderFeedback("success", {
-      title: "Спасибо! Заказ получен.",
-      text: "Мы скоро свяжемся для подтверждения доставки/самовывоза.",
-      showActions: true
-    });
-    const el = document.getElementById("form-feedback");
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-    const helper = document.getElementById("submit-helper");
-    if (helper) helper.style.display = "none";
-  } catch {
-    renderFeedback("error", {
-      title: "Ошибка отправки.",
-      text: "Попробуйте ещё раз или свяжитесь с нами."
-    });
-    clearFormMessage(form);
-  } finally {
-    if (submitButton instanceof HTMLButtonElement) {
-      submitButton.disabled = false;
-    }
-  }
+  resetCheckoutFields();
+  lineItems = [];
+  renderOrderItems();
+  showDemoConfirmation(fulfillment);
+  const feedback = document.getElementById("form-feedback");
+  feedback.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-function setupFormSubmit() {
-  const form = document.getElementById("order-form");
-  if (!(form instanceof HTMLFormElement)) return;
-  form.addEventListener("submit", handleFormSubmit);
-}
-
-// Init
 document.addEventListener("DOMContentLoaded", () => {
+  const checkout = document.getElementById("order-form");
   setupProductButtons();
   setupAddItemButton();
   setupOrderItemsEvents();
   setupFulfillmentToggle();
-  setupFormSubmit();
-
-  // Initial render
   renderOrderItems();
+  document.getElementById("complete-checkout").addEventListener("click", completeCheckout);
+  checkout.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.isComposing &&
+        event.target instanceof HTMLInputElement && event.target.id !== "" &&
+        ["text", "email", "tel"].includes(event.target.type)) {
+      event.preventDefault();
+      completeCheckout();
+    }
+  });
+  window.addEventListener("pagehide", resetCheckoutFields);
+  document.getElementById("order-controls").disabled = false;
+  document.getElementById("checkout-unavailable").hidden = true;
 });
