@@ -268,7 +268,10 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <p class="section-subline">Размер партий ограничен.</p>
 </header>
   <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
-<form id="order-form" novalidate>
+<noscript><p>Для оформления заказа требуется JavaScript. Если форма не загрузилась, не вводите данные.</p></noscript>
+<form id="order-form" method="post" novalidate>
+<fieldset id="order-controls" class="form-fieldset" disabled>
+<legend>Данные заказа</legend>
 <!-- Line items (будет заполняться скриптом) -->
 <section aria-labelledby="order-items-title">
 <div class="form-section-header">
@@ -292,7 +295,7 @@ aria-label="Выбрать кофе CHAMBAKÚ DECAF для заказа"
 <label for="customer-name">Имя и фамилия </label>
 <input
 id="customer-name"
-name="name"
+data-field="name"
 type="text"
 autocomplete="name"
 required
@@ -302,7 +305,7 @@ required
 <label for="customer-phone">Телефон </label>
 <input
 id="customer-phone"
-name="phone"
+data-field="phone"
 type="tel"
 inputmode="tel"
 autocomplete="tel"
@@ -313,7 +316,7 @@ required
 <label for="customer-email">Email </label>
 <input
 id="customer-email"
-name="email"
+data-field="email"
 type="email"
 autocomplete="email"
 required
@@ -356,7 +359,7 @@ required
 <label for="address-line1">Адрес (улица, дом, квартира)</label>
 <input
 id="address-line1"
-name="address_line1"
+data-field="address_line1"
 type="text"
 autocomplete="street-address"
 >
@@ -365,7 +368,7 @@ autocomplete="street-address"
 <label for="address-notes">Примечание (район, ориентир)</label>
 <input
 id="address-notes"
-name="address_notes"
+data-field="address_notes"
 type="text"
 >
 </div>
@@ -373,7 +376,7 @@ type="text"
 <label for="preferred-time">Предпочтительное время доставки</label>
 <input
 id="preferred-time"
-name="preferred_time"
+data-field="preferred_time"
 type="text"
 placeholder="Например: после 18:00"
 >
@@ -382,7 +385,7 @@ placeholder="Например: после 18:00"
 <label for="order-comment">Комментарий к заказу</label>
 <textarea
 id="order-comment"
-name="comment"
+data-field="comment"
 rows="3"
 ></textarea>
 </div>
@@ -404,7 +407,7 @@ rows="3"
 <section aria-label="Отправка заказа">
 <input
 type="text"
-name="company"
+data-field="company"
 id="company"
 autocomplete="organization"
 tabindex="-1"
@@ -418,9 +421,10 @@ class="honeypot"
 Мы свяжемся с вами для подтверждения.
 </p>
 <p class="privacy-note">
-Отправляя форму, вы соглашаетесь на обработку указанных данных для связи по вашему заказу. Данные не передаются третьим лицам, за исключением курьерской службы для доставки.
+Форма отправляет данные заказа через Formspree для получения и подтверждения заказа. При выборе доставки форма также отправляет указанный адрес и сведения для доставки.
 </p>
 </section>
+</fieldset>
 </form>
 </div>
 </section>
@@ -447,7 +451,7 @@ class="honeypot"
 </article>
 <article class="policy">
 <h3>Политика конфиденциальности</h3>
-<p>Мы используем указанные данные только для обработки заказа и связи с вами. Данные не продаются и не передаются третьим лицам, кроме курьерской службы для доставки.</p>
+<p>Форма использует Formspree для приёма заказа. Данные используются для обработки заказа и связи с вами.</p>
 </article>
 </section>
 <div class="footer-bottom">

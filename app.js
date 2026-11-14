@@ -412,13 +412,13 @@ function renderFeedback(type, options = {}) {
 }
 
 function buildPayload(form) {
-  const nameInput = form.querySelector('input[name="name"]');
-  const phoneInput = form.querySelector('input[name="phone"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const addressInput = form.querySelector('input[name="address_line1"]');
-  const addressNotesInput = form.querySelector('input[name="address_notes"]');
-  const preferredTimeInput = form.querySelector('input[name="preferred_time"]');
-  const commentInput = form.querySelector('textarea[name="comment"]');
+  const nameInput = form.querySelector('input[data-field="name"]');
+  const phoneInput = form.querySelector('input[data-field="phone"]');
+  const emailInput = form.querySelector('input[data-field="email"]');
+  const addressInput = form.querySelector('input[data-field="address_line1"]');
+  const addressNotesInput = form.querySelector('input[data-field="address_notes"]');
+  const preferredTimeInput = form.querySelector('input[data-field="preferred_time"]');
+  const commentInput = form.querySelector('textarea[data-field="comment"]');
   const fulfillmentRadios = form.querySelectorAll('input[name="fulfillment"]');
 
   let fulfillment = "";
@@ -465,12 +465,14 @@ function buildPayload(form) {
       email: emailInput instanceof HTMLInputElement ? emailInput.value.trim() : ""
     },
     fulfillment,
-    address: {
-      line1: addressInput instanceof HTMLInputElement ? addressInput.value.trim() : "",
-      notes: addressNotesInput instanceof HTMLInputElement ? addressNotesInput.value.trim() : ""
-    },
-    preferredTime: preferredTimeInput instanceof HTMLInputElement ? preferredTimeInput.value.trim() : "",
-    comment: commentInput instanceof HTMLTextAreaElement ? commentInput.value.trim() : "",
+    ...(fulfillment === "courier" ? {
+      address: {
+        line1: addressInput instanceof HTMLInputElement ? addressInput.value.trim() : "",
+        notes: addressNotesInput instanceof HTMLInputElement ? addressNotesInput.value.trim() : ""
+      },
+      preferredTime: preferredTimeInput instanceof HTMLInputElement ? preferredTimeInput.value.trim() : "",
+      comment: commentInput instanceof HTMLTextAreaElement ? commentInput.value.trim() : ""
+    } : {}),
     items: itemsDetailed,
     totals: {
       itemsCount: totalItems,
@@ -488,11 +490,11 @@ async function handleFormSubmit(event) {
   clearFormMessage(form);
 
   const submitButton = form.querySelector('button[type="submit"]');
-  const honeypot = form.querySelector('input[name="company"]');
-  const nameInput = form.querySelector('input[name="name"]');
-  const phoneInput = form.querySelector('input[name="phone"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const addressInput = form.querySelector('input[name="address_line1"]');
+  const honeypot = form.querySelector('input[data-field="company"]');
+  const nameInput = form.querySelector('input[data-field="name"]');
+  const phoneInput = form.querySelector('input[data-field="phone"]');
+  const emailInput = form.querySelector('input[data-field="email"]');
+  const addressInput = form.querySelector('input[data-field="address_line1"]');
   const fulfillmentRadios = form.querySelectorAll('input[name="fulfillment"]');
 
   // Honeypot spam check
@@ -638,8 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupAddItemButton();
   setupOrderItemsEvents();
   setupFulfillmentToggle();
-  setupFormSubmit();
-
-  // Initial render
   renderOrderItems();
+  setupFormSubmit();
+  document.getElementById("order-controls").disabled = false;
 });
